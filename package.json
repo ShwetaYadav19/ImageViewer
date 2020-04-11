@@ -1,0 +1,49 @@
+{
+  "name": "image-viewer",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@material-ui/core": "^4.9.9",
+    "@material-ui/icons": "^4.9.1",
+    "card": "^2.4.0",
+    "mdbreact": "^4.25.5",
+    "react": "^16.7.0-alpha.2",
+    "react-dom": "^16.7.0-alpha.2",
+    "react-instantsearch-dom": "^6.4.0",
+    "react-modal": "^3.11.2",
+    "react-native": "^0.62.2",
+    "react-native-elements": "^1.2.7",
+    "react-native-paper": "^3.8.0",
+    "react-native-vector-icons": "^6.6.0",
+    "react-native-web": "^0.12.0",
+    "react-router-dom": "^5.1.2",
+    "react-scripts": "2.0.4",
+    "react-search-box": "^2.0.2"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ],
+  "plugins": [
+    [
+      "@babel/plugin-proposal-class-properties",
+      {
+        "loose": true
+      }
+    ]
+  ],
+  "devDependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.8.3"
+  }
+}
