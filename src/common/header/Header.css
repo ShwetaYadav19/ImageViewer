@@ -12,15 +12,10 @@
 
 .after-login{
      float: right;
+     display: flex;
 }
 
-.search-bar{
 
-}
-
-.search-icon{
-     
-}
 
 
 

@@ -1,27 +1,27 @@
 import React, { Component } from 'react';
 import './Header.css';
-import photo from '../../assets/Logo.png';
 import InputBase from '@material-ui/core/InputBase';
 import SearchIcon from '@material-ui/icons/Search';
 import { fade, makeStyles } from '@material-ui/core/styles';
 import { withStyles } from '@material-ui/core/styles';
+import IconButton from '@material-ui/core/IconButton';
 
 
 const styles = (theme) => ({
  
     search: {
       position: 'relative',
-      borderRadius: theme.shape.borderRadius,
+      borderRadius: '4px',
       backgroundColor: fade(theme.palette.common.white, 0.15),
       '&:hover': {
-        backgroundColor: fade(theme.palette.common.white, 0.25),
+        backgroundColor: '#c0c0c0',
       },
       marginRight: theme.spacing(2),
       marginLeft: 0,
       width: '100%',
       [theme.breakpoints.up('sm')]: {
         marginLeft: theme.spacing(3),
-        width: '200px',
+        width: '300px',
       },
       float: 'right'
     },
@@ -48,6 +48,7 @@ const styles = (theme) => ({
       },
     },
   });
+
   
   
 class Header extends Component{
@@ -57,9 +58,29 @@ class Header extends Component{
         this.state={
        
             search: '',
+            photo : null
        
         }
     }
+
+    componentWillMount() {
+      // Get profile picture
+      let data = null;
+      let xhr = new XMLHttpRequest();
+      let that = this;
+     
+      xhr.addEventListener("readystatechange", function () {
+          if (this.readyState === 4) {
+              that.setState({
+                  photo: JSON.parse(this.responseText).data.profile_picture
+              });
+          }
+      });
+  
+      xhr.open("GET", "v1/users/self/?access_token=8661035776.d0fcd39.39f63ab2f88d4f9c92b0862729ee2784");
+      xhr.send(data);
+    }
+    
   
     updateSearch = e => {
         this.setState({ search : e.target.value });
@@ -69,7 +90,7 @@ class Header extends Component{
     render(){
     const { classes } = this.props;
      const { search } = this.state;
-     console.log(this.props.showSearchTab);
+     console.log(this.state.photo);
         return(
             <div>
                 <header className="app-header">
@@ -79,8 +100,10 @@ class Header extends Component{
                    
                     {this.props.loggedIn ==="true" ?
                        <div className="after-login">
-                        <img src={photo} 
+                        <IconButton style={{padding :'0'}}>   
+                            <img src={this.state.photo} 
                             style={{width: 40, height: 40, borderRadius: 40/2}} />
+                        </IconButton>
                      </div>
                         :
                         ""
@@ -104,6 +127,8 @@ class Header extends Component{
                         
                         : ""
                     }
+
+                    
 
                 </header>
          
