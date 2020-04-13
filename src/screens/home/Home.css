@@ -1,0 +1,30 @@
+.posts-flex-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 10px 100px;
+   
+    
+  }
+  
+  .posts-card {
+    display: flex;
+    flex-direction: column;
+    flex: 1 0 50%;
+    margin-bottom: 20px;
+    
+  }
+
+
+  .image-container{
+   padding: 10px;
+  }
+  .noLike{
+    background-color: white;
+  }
+
+  .liked{
+    background-color: red;
+  }

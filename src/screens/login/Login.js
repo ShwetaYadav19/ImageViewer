@@ -43,13 +43,21 @@ class Login extends Component{
     }
 
     loginClickHandler = () => {
+        this.setState({ incorrectUserNamePassword: "dispNone" });
         this.state.username === "" ? this.setState({ usernameRequired: "dispBlock" }) : this.setState({ usernameRequired: "dispNone" });
         this.state.loginPassword === "" ? this.setState({ loginPasswordRequired: "dispBlock" }) : 
         this.setState({ loginPasswordRequired: "dispNone" });
-        this.setState({ incorrectUserNamePassword: "dispBlock" });
-        ReactDOM.render(<Home loggedIn="true" showSearchTab = "true"/>, document.getElementById('root'));
-        
 
+        if(this.state.username !== ""  && !this.state.loginPassword !== "" ){
+           /* if(this.state.username === "Upgrad" && this.state.loginPassword=="password"){*/
+                this.setState({loggedIn : "true"}) ;
+                sessionStorage.setItem("access-token","8661035776.d0fcd39.39f63ab2f88d4f9c92b0862729ee2784");
+                ReactDOM.render(<Home loggedIn="true" showSearchTab = "true"/>, document.getElementById('root'));
+                
+            /*    } else {
+                    this.setState({ incorrectUserNamePassword: "dispBlock" });
+                } */
+        }
     }
 
    

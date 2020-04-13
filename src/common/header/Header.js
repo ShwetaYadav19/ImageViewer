@@ -68,6 +68,7 @@ class Header extends Component{
       let data = null;
       let xhr = new XMLHttpRequest();
       let that = this;
+      
      
       xhr.addEventListener("readystatechange", function () {
           if (this.readyState === 4) {
@@ -76,8 +77,9 @@ class Header extends Component{
               });
           }
       });
-  
-      xhr.open("GET", "v1/users/self/?access_token=8661035776.d0fcd39.39f63ab2f88d4f9c92b0862729ee2784");
+      console.log(sessionStorage.getItem("access-token"));
+      xhr.open("GET", "v1/users/self/?access_token="+sessionStorage.getItem("access-token"));
+      xhr.setRequestHeader("Cache-Control", "no-cache");
       xhr.send(data);
     }
     
@@ -90,7 +92,7 @@ class Header extends Component{
     render(){
     const { classes } = this.props;
      const { search } = this.state;
-     console.log(this.state.photo);
+     
         return(
             <div>
                 <header className="app-header">
@@ -139,4 +141,4 @@ class Header extends Component{
     }
 }
 
-export default withStyles(styles)(Header);;
+export default withStyles(styles)(Header);
