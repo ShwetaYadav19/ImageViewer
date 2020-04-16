@@ -5,6 +5,13 @@ import SearchIcon from '@material-ui/icons/Search';
 import { fade, makeStyles } from '@material-ui/core/styles';
 import { withStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
+import Button from '@material-ui/core/Button';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+
+
+
+
 
 
 const styles = (theme) => ({
@@ -47,6 +54,16 @@ const styles = (theme) => ({
         width: '20ch',
       },
     },
+    bg: {
+      
+      backgroundColor: '#b3b3b3 !important',
+      color: 'black !important',
+      padding: '10px',
+      borderRadius : '10px',
+      height:'90px'
+    }
+  
+
   });
 
   
@@ -58,7 +75,10 @@ class Header extends Component{
         this.state={
        
             search: '',
-            photo : null
+            photo : null,
+            anchorEl : null
+           
+            
        
         }
     }
@@ -87,11 +107,21 @@ class Header extends Component{
     updateSearch = e => {
         this.setState({ search : e.target.value });
       };
+
+      handleClick = (event) => {
+         this.setState({anchorEl : event.currentTarget });
+         
+      };
+    
+      handleClose = () => {
+        this.setState({anchorEl : null });
+      };
    
 
     render(){
     const { classes } = this.props;
      const { search } = this.state;
+
      
         return(
             <div>
@@ -100,21 +130,55 @@ class Header extends Component{
                    
                     
                    
-                    {this.props.loggedIn ==="true" ?
+                    {this.props.loggedIn ==="true"?
                        <div className="after-login">
-                        <IconButton style={{padding :'0'}}>   
+                         <IconButton style={{padding :'0'}} onClick={this.handleClick}>   
                             <img src={this.state.photo} 
                             style={{width: 40, height: 40, borderRadius: 40/2}} />
-                        </IconButton>
-                     </div>
-                        :
-                        ""
+                          </IconButton>
+                         
+                            <Menu
+                                className="simple-menu"
+                                elevation={0}
+                                getContentAnchorEl={null}
+                                anchorEl={this.state.anchorEl}
+                                anchorOrigin={{
+                                  vertical: 'bottom',
+                                  horizontal: 'center',
+                                }}
+                                transformOrigin={{
+                                  vertical: 'top',
+                                  horizontal: 'center',
+                                }}
+                                
+                                keepMounted
+                                open={Boolean(this.state.anchorEl)}
+                                onClose={this.handleClose}>
+                              <div className={classes.bg}>
+                              <MenuItem onClose={this.handleClose} >My Account</MenuItem>
+                              <hr />
+                              <MenuItem onClose={this.handleClose}>Logout</MenuItem>
+                              </div> 
+                            </Menu>
+                           
+                          
+                              
+                        </div>
+                                      :
+                                      ""
                         
                     }
+
+                                            
+                     
+
+                   
                     {this.props.loggedIn === "true"
                         ? <div className={classes.search}>
                         <div className={classes.searchIcon}>
-                          <SearchIcon />
+                          <SearchIcon/>
+                          
+                    
                         </div>
                         <InputBase
                           placeholder="Search…"
@@ -129,6 +193,7 @@ class Header extends Component{
                         
                         : ""
                     }
+                    
 
                     
 

@@ -3,16 +3,19 @@ import './Home.css';
 import { withStyles } from '@material-ui/core/styles';
 import posts from '../../common/posts'
 import Header from '../../common/header/Header';
+import Input from '@material-ui/core/Input';
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import CardMedia from '@material-ui/core/CardMedia';
 import CardContent from '@material-ui/core/CardContent';
-import CardActions from '@material-ui/core/CardActions';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
-import FavoriteIcon from '@material-ui/icons/Favorite';
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
-import 'moment-timezone';
+import Moment from 'react-moment';
+import { Button } from '@material-ui/core';
+import FormControl from '@material-ui/core/FormControl';
+import InputLabel from '@material-ui/core/InputLabel';
+
 
 
 
@@ -51,7 +54,9 @@ class Home extends Component{
             profile_picture : null,
             numberOfLikes : 0,
             isLiked : false,
-            favoritesIcon : "noLike"
+            favoritesIcon : "noLike",
+            comments:[],
+            comment:""
         }
        
     }
@@ -84,6 +89,17 @@ class Home extends Component{
          this.setState({numberOfLikes : n+1})
          
       }
+
+      commentHandler = (e) =>{
+          this.setState({comment : e.target.value})
+      }
+      addCommentHandler =(input) =>{
+          
+          this.state.comments.push(this.state.comment);
+          this.setState({comment:""});
+          
+        
+        }
     render(){
         const { classes } = this.props;
         
@@ -94,7 +110,7 @@ class Home extends Component{
                   {this.state.posts.map(post => (
                 
                         <div className="posts-card">
-                            <Card className={classes.root} id={post.id}>
+                            <Card className={classes.root} id={"post" + post.id}>
                                 <CardHeader
                                     avatar={
                                     <IconButton style={{padding :'0'}}>   
@@ -105,7 +121,10 @@ class Home extends Component{
                                   
                                     title={post.user.username}
                                  
-                                    subheader = {post.created_time}
+                                  subheader={ <Moment format="MM/DD/YYYY HH:mm:ss">
+                                    {post.user.created_time}
+                                   </Moment>
+                                  }
 
                                    
                                     
@@ -128,6 +147,34 @@ class Home extends Component{
                                         className={this.state.favoritesIcon} />
                                         <span style={{fontSize :20}}> {post.likes.count} likes </span> 
                                     </IconButton>
+                                    <br/><br/>
+                                  
+                                    <div className="comment-container">
+                                    
+                                    {
+                                        this.state.comments.map(comment =>(
+                                            <div>
+                                             <span style={{fontWeight:'bolder'}}>{post.user.username} </span>: <span>{comment}</span>
+                                            
+                                            </div>
+                                            
+                                           
+                                        ))
+                                    }
+                                    
+                                    <br/><br/>
+                                    <FormControl >
+                                    <div className ="comment-section">
+                                    <InputLabel htmlFor="commentInput">Add a comment</InputLabel>
+                                    <Input id="commentInput"  type="text"   
+                                    comment={this.state.comment} onChange={this.commentHandler} />
+                                    <Button variant="contained" color="primary" onClick={this.addCommentHandler}>
+                                        ADD
+                                    </Button>
+                                    </div>
+                                    </FormControl>
+                              
+                                    </div>
                                     
                                 </CardContent>    
                               

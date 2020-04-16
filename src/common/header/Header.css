@@ -15,9 +15,6 @@
      display: flex;
 }
 
-
-
-
-
-
-
+.greyed {
+  background-color: grey;
+}

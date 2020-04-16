@@ -28,3 +28,13 @@
   .liked{
     background-color: red;
   }
+
+  #commentInput{
+    width: 300px;
+  }
+  .comment-section{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+  }
