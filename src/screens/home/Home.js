@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import './Home.css';
 import { withStyles } from '@material-ui/core/styles';
-import posts from '../../common/posts'
 import Header from '../../common/header/Header';
 import Input from '@material-ui/core/Input';
 import Card from '@material-ui/core/Card';
@@ -50,17 +49,20 @@ class Home extends Component{
     constructor(){
         super();
         this.state = {
-            posts : posts,
+            posts : [],
             profile_picture : null,
             numberOfLikes : 0,
             isLiked : false,
             favoritesIcon : "noLike",
             comments:[],
-            comment:""
+            comment:"",
+           
         }
        
     }
     componentWillMount() {
+        
+    
         // Get profile picture
         let data = null;
         let xhr = new XMLHttpRequest();
@@ -79,7 +81,25 @@ class Home extends Component{
         xhr.open("GET", "v1/users/self/?access_token="+sessionStorage.getItem("access-token"));
         xhr.setRequestHeader("Cache-Control", "no-cache");
         xhr.send(data);
-
+      
+         // Get posts 
+         let postData = null;
+         let xhrPosts = new XMLHttpRequest();
+         
+         
+        
+         xhrPosts.addEventListener("readystatechange", function () {
+             if (this.readyState === 4) {
+                 that.setState({
+                    posts :JSON.parse(this.responseText).data
+            
+                 });
+             }
+         });
+         console.log(sessionStorage.getItem("access-token"));
+         xhrPosts.open("GET", "v1/users/self/media/recent?access_token="+sessionStorage.getItem("access-token"));
+         xhrPosts.setRequestHeader("Cache-Control", "no-cache");
+         xhrPosts.send(postData);
       
 
         
@@ -100,15 +120,25 @@ class Home extends Component{
           
         
         }
+
+     
     render(){
         const { classes } = this.props;
+        const search = this.props.search;
+        let relevantPosts = this.state.posts;
+        if(search !== undefined){
+            relevantPosts = this.state.posts.filter( post =>{
+            let postInLower = post.caption.text.toLowerCase();
+            return postInLower.indexOf( search.toLowerCase() ) !== -1
+        }) }
         
         return(
             <div>
-                <Header loggedIn='true'/>
+                <Header loggedIn='true' showSearchTab="true"/>
                 <div className="posts-flex-container">
-                  {this.state.posts.map(post => (
-                
+                 
+            
+                  {relevantPosts.map(post => (
                         <div className="posts-card">
                             <Card className={classes.root} id={"post" + post.id}>
                                 <CardHeader
@@ -180,7 +210,10 @@ class Home extends Component{
                               
                             </Card>
                         </div>
+                  
+                               
                   ))}
+                  
                 </div>
    
            </div>

@@ -30,7 +30,8 @@ class Login extends Component{
             loginPasswordRequired: "dispNone",
             loginPassword: "",
             loggedIn: sessionStorage.getItem("access-token") == null ? false : true,
-            incorrectUserNamePassword : "dispNone"
+            incorrectUserNamePassword : "dispNone",
+           
         }
     }
     
@@ -52,7 +53,7 @@ class Login extends Component{
            /* if(this.state.username === "Upgrad" && this.state.loginPassword=="password"){*/
                 this.setState({loggedIn : "true"}) ;
                 sessionStorage.setItem("access-token","8661035776.d0fcd39.39f63ab2f88d4f9c92b0862729ee2784");
-                ReactDOM.render(<Home loggedIn="true" showSearchTab = "true"/>, document.getElementById('root'));
+                ReactDOM.render(<Home showSearchTab="true" loggedIn="true" />, document.getElementById('root'));
                 
             /*    } else {
                     this.setState({ incorrectUserNamePassword: "dispBlock" });

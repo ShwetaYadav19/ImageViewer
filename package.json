@@ -6,14 +6,17 @@
   "dependencies": {
     "@material-ui/core": "^4.9.9",
     "@material-ui/icons": "^4.9.1",
+    "bootstrap": "^4.4.1",
     "card": "^2.4.0",
     "material-ui-popup-state": "^1.5.4",
     "mdbreact": "^4.25.5",
     "moment": "^2.24.0",
     "moment-timezone": "^0.5.28",
     "react": "^16.7.0-alpha.2",
+    "react-bootstrap": "^1.0.0",
     "react-bootstrap-datetimepicker": "0.0.22",
     "react-dom": "^16.7.0-alpha.2",
+    "react-icons": "^3.9.0",
     "react-instantsearch-dom": "^6.4.0",
     "react-modal": "^3.11.2",
     "react-moment": "^0.9.7",
@@ -52,6 +55,8 @@
     ]
   ],
   "devDependencies": {
-    "@babel/plugin-proposal-class-properties": "^7.8.3"
+    "@babel/plugin-proposal-class-properties": "^7.8.3",
+    "@iconify/icons-ion": "^1.0.11",
+    "@iconify/react": "^1.1.3"
   }
 }
