@@ -14,6 +14,7 @@ import { withStyles } from '@material-ui/core/styles';
 import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
+import FavoriteIcon from '@material-ui/icons/Favorite';
 
 
 
@@ -86,6 +87,7 @@ class Profile extends Component{
            favoritesIcon : "noLike",
            comments:[],
            comment:"",
+           index:null
         }
     }
     
@@ -163,21 +165,30 @@ class Profile extends Component{
     postDetailClose = () =>{
         this.setState({postModalIsOpen : false});
     }
-    increaseLikesHandler = (e) => {
-        let n = this.state.numberOfLikes;
-       this.setState({numberOfLikes : n+1})
-       
-    }
+    increaseLikesHandler = (id) => {
+        this.setState({isLiked:true});
+        this.state.posts.map(post=>{
+            if(post.id===id){
+                let n = post.likes.count + 1;
+                post.likes.count = n;
+            }
+        })
+        
+     }
 
-    commentHandler = (e) =>{
+
+     commentHandler = (e) =>{
         this.setState({comment : e.target.value})
     }
-    addCommentHandler =(input) =>{
-        
-        this.state.comments.push(this.state.comment);
-        this.setState({comment:""});
-        
-      
+    addCommentHandler =(index) =>{
+      if(this.state.comment!==null && this.state.comment !== "")  {
+              if(this.state.comments[index] === undefined)
+                  this.state.comments[index] = this.state.comment;
+              else   this.state.comments[index] = this.state.comments[index]+":"+ this.state.comment; 
+              this.forceUpdate();
+              
+              this.setState({comment:null});
+          }
       }
 
     
@@ -276,19 +287,31 @@ class Profile extends Component{
                                         ))
                                     }
                                     <br/><br/>
-                                    <IconButton aria-label="add to favorites" onClick={this.increaseLikesHandler} >
-                                        <FavoriteBorderIcon 
-                                        className={this.state.favoritesIcon} />
-                                        <span style={{fontSize :20}}> {this.state.post.likes.count} likes </span> 
-                                    </IconButton>
+                                    <div className="like-section" >
+                                      <span onClick={() => this.increaseLikesHandler(this.state.post.id)}>
+                                     
+                                    {!this.state.post.user_has_liked ?<FavoriteBorderIcon />:
+                                    <FavoriteIcon className="fav"/>}
+                                      </span>       
+                                            <span style={{fontSize :20}}> {this.state.post.likes.count} likes </span> 
+                                    </div> 
                                     
                                     <br/>
                                     <FormControl >
-                                        <div className ="profile-comment-section">
+                                      
+                                    {this.state.comments[this.state.index] !== undefined && this.state.comments[this.state.index] !== null ?
+                                     this.state.comments[this.state.index].split(':').map(
+                                        comment=>( <div>
+                                            <span style={{fontWeight:"bold"}}>{this.state.post.user.username} : </span>
+                                        <span>{comment}</span>
+                                        </div>)
+                                    ) :""
+                                    } 
+                                          <div className ="profile-comment-section">                                    
                                             <InputLabel htmlFor="profilecommentInput">Add a comment</InputLabel>
                                             <Input id="profilecommentInput"  type="text"   
                                             comment={this.state.comment} onChange={this.commentHandler} />
-                                            <Button variant="contained" color="primary" onClick={this.addCommentHandler}>
+                                            <Button variant="contained" color="primary" onClick={() => this.addCommentHandler(this.state.index)}>
                                                 ADD
                                             </Button>
                                         </div>
@@ -299,11 +322,11 @@ class Profile extends Component{
                         </div> 
                     </Modal>  :""}
                         <GridList cellHeight={300} className={classes.gridList} cols={3}>
-                        { this.state.posts.map(post => (
+                        { this.state.posts.map((post,index) => (
                             
                             <GridListTile className={classes.gridTile} key={post.id} > 
                               <img src={post.images.standard_resolution.url}  alt={post.user.id} 
-                              onClick={() => {this.setState({postModalIsOpen : true}); this.setState({post:post});}}/>
+                              onClick={() => {this.setState({postModalIsOpen : true}); this.setState({post:post}); this.setState({index:index})}}/>
                             </GridListTile>
                          ))} 
                          </GridList>

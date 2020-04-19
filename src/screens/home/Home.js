@@ -47,11 +47,11 @@ class Home extends Component{
         this.state = {
             posts : [],
             profile_picture : null,
-            numberOfLikes : 0,
-            isLiked : false,
             comments:[],
             comment:"",
-            search:""
+            search:"",
+            isLiked:false,
+            likedByUser:[]
             
            
         }
@@ -59,7 +59,6 @@ class Home extends Component{
     }
     componentDidMount() {
         
-    
         // Get profile picture
         let data = null;
         let xhr = new XMLHttpRequest();
@@ -89,7 +88,7 @@ class Home extends Component{
              if (this.readyState === 4) {
                  that.setState({
                     posts :JSON.parse(this.responseText).data
-            
+                  
                  });
              }
          });
@@ -97,27 +96,45 @@ class Home extends Component{
          xhrPosts.setRequestHeader("Cache-Control", "no-cache");
          xhrPosts.send(postData);
       
-
         
-      }
+        }  
+      
       increaseLikesHandler = (id) => {
-   
-         this.setState({isLiked : true});
+         console.log("Increase likes for : " +id);
+         this.setState({isLiked:true});
+         this.state.posts.map(post=>{
+             if(post.id===id){
+                 let n = post.likes.count + 1;
+                 post.likes.count = n;
+             }
+         })
          
       }
 
+      loadPost = (id) =>{
+        this.state.posts.map(post=>{
+            if(post.id===id){
+               
+            }
+        })
+      }
+
+     
       commentHandler = (e) =>{
           this.setState({comment : e.target.value})
       }
-      addCommentHandler =(input) =>{
-          
-          this.state.comments.push(this.state.comment);
-          this.setState({comment:""});
-          
-        
+      addCommentHandler =(index) =>{
+        if(this.state.comment!==null && this.state.comment !== "")  {
+                if(this.state.comments[index] === undefined)
+                    this.state.comments[index] = this.state.comment;
+                else   this.state.comments[index] = this.state.comments[index]+":"+ this.state.comment; 
+                this.forceUpdate();
+                
+                this.setState({comment:null});
+            }
         }
 
-        searchHandler=(e)=>{
+    searchHandler=(e)=>{
         e.preventDefault();
         this.setState({search :  e.target.value});
         }
@@ -126,6 +143,7 @@ class Home extends Component{
     render(){
         const { classes } = this.props;
         let relevantPosts = this.state.posts;
+        const index=0;
         if(this.state.search !== undefined){
           
             relevantPosts = this.state.posts.filter( post =>{
@@ -140,9 +158,11 @@ class Home extends Component{
                 searchHandler={this.searchHandler}/>
                 <div className="posts-flex-container">
                  
-            
-                  {relevantPosts.map(post => (
-                        <div className="posts-card" key={post.id}>
+                 
+                  {relevantPosts.map((post,index) => (
+                  
+                        
+                        <div className="posts-card" key={post.id} onLoad={this.loadPost}>
                             <Card className={classes.root} id={"post" + post.id}>
                                 <CardHeader
                                     avatar={
@@ -171,12 +191,22 @@ class Home extends Component{
                                 <hr/>
                                 <CardContent>
                                     <Typography variant="body2" color="textPrimary" component="p">
-                                       {post.caption.text}
+                                     {post.caption.text.split('\n')[0]}
+                                       
+                                    
+                                    </Typography>
+                                    <Typography className="tags" variant="body2" color="blue" component="p">
+                                        {post.tags.map(tag=>(
+                                          <span> #{tag}</span>
+                                        ))
+
+                                        }
                                     </Typography>
                                    <br/>
                                   <div className="like-section" >
-                                      <span onClick={this.increaseLikesHandler}>
-                                    {!this.state.isLiked ?<FavoriteBorderIcon />:
+                                      <span onClick={() => this.increaseLikesHandler(post.id)}>
+                                     
+                                    {!post.user_has_liked ?<FavoriteBorderIcon />:
                                     <FavoriteIcon className="fav"/>}
                                       </span>       
                                             <span style={{fontSize :20}}> {post.likes.count} likes </span> 
@@ -184,16 +214,13 @@ class Home extends Component{
                                     <br/><br/>
                                   
                                     <div className="comment-container">
-                                    
-                                    {
-                                        this.state.comments.map(comment =>(
-                                            <div id={"newcomment"+post.id}>
-                                             <span style={{fontWeight:'bolder'}}>{post.user.username} </span>: <span>{comment}</span>
-                                              
-                                            </div>
-                                            
-                                           
-                                        ))
+                                    {this.state.comments[index] !== undefined && this.state.comments[index] !== null ?
+                                     this.state.comments[index].split(':').map(
+                                        comment=>( <div>
+                                            <span style={{fontWeight:"bold"}}>{post.user.username} : </span>
+                                        <span>{comment}</span>
+                                        </div>)
+                                    ) :""
                                     }
                                     
                                     <br/><br/>
@@ -201,8 +228,8 @@ class Home extends Component{
                                     <div className ="comment-section">
                                     <InputLabel htmlFor={"comment" + post.id}>Add a comment</InputLabel>
                                     <Input id={"comment" + post.id}  type="text"   
-                                    comment={this.state.comment} onChange={this.commentHandler} />
-                                    <Button variant="contained" color="primary" onClick={this.addCommentHandler}>
+                                     comment={this.state.comment} onChange={this.commentHandler} />
+                                    <Button variant="contained" color="primary" onClick={() => this.addCommentHandler(index)}>
                                         ADD
                                     </Button>
                                     </div>

@@ -75,7 +75,7 @@ class Header extends Component{
             photo : null,
             anchorEl : null,
             searchInput : "",
-           
+         
             
        
         }

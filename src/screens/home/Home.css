@@ -25,6 +25,10 @@
  color: red;
 }
 
+.tags{
+  color:blue;
+}
+
   #commentInput{
     width: 300px;
   }
