@@ -14,6 +14,7 @@ import Moment from 'react-moment';
 import { Button } from '@material-ui/core';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
+import FavoriteIcon from '@material-ui/icons/Favorite';
 
 
 
@@ -36,31 +37,27 @@ const styles = theme => ({
       expandOpen: {
         transform: 'rotate(180deg)',
       },
-      avatar: {
-        
-      },
-
-      createdTime :{
-          
-      }
+     
 });
 class Home extends Component{
   
     constructor(){
         super();
+        
         this.state = {
             posts : [],
             profile_picture : null,
             numberOfLikes : 0,
             isLiked : false,
-            favoritesIcon : "noLike",
             comments:[],
             comment:"",
+            search:""
+            
            
         }
        
     }
-    componentWillMount() {
+    componentDidMount() {
         
     
         // Get profile picture
@@ -77,8 +74,8 @@ class Home extends Component{
                 });
             }
         });
-        console.log(sessionStorage.getItem("access-token"));
-        xhr.open("GET", "v1/users/self/?access_token="+sessionStorage.getItem("access-token"));
+   
+        xhr.open("GET", this.props.baseUrl+"?access_token="+sessionStorage.getItem("access-token"));
         xhr.setRequestHeader("Cache-Control", "no-cache");
         xhr.send(data);
       
@@ -96,17 +93,16 @@ class Home extends Component{
                  });
              }
          });
-         console.log(sessionStorage.getItem("access-token"));
-         xhrPosts.open("GET", "v1/users/self/media/recent?access_token="+sessionStorage.getItem("access-token"));
+         xhrPosts.open("GET", this.props.baseUrl+"/media/recent?access_token="+sessionStorage.getItem("access-token"));
          xhrPosts.setRequestHeader("Cache-Control", "no-cache");
          xhrPosts.send(postData);
       
 
         
       }
-      increaseLikesHandler = (e) => {
-          let n = this.state.numberOfLikes;
-         this.setState({numberOfLikes : n+1})
+      increaseLikesHandler = (id) => {
+   
+         this.setState({isLiked : true});
          
       }
 
@@ -121,30 +117,37 @@ class Home extends Component{
         
         }
 
+        searchHandler=(e)=>{
+        e.preventDefault();
+        this.setState({search :  e.target.value});
+        }
+
      
     render(){
         const { classes } = this.props;
-        const search = this.props.search;
         let relevantPosts = this.state.posts;
-        if(search !== undefined){
+        if(this.state.search !== undefined){
+          
             relevantPosts = this.state.posts.filter( post =>{
             let postInLower = post.caption.text.toLowerCase();
-            return postInLower.indexOf( search.toLowerCase() ) !== -1
+            return postInLower.indexOf( this.state.search.toLowerCase() ) !== -1
         }) }
         
         return(
             <div>
-                <Header loggedIn='true' showSearchTab="true"/>
+                
+                <Header loggedIn='true' showSearchTab="true" baseUrl={this.props.baseUrl} 
+                searchHandler={this.searchHandler}/>
                 <div className="posts-flex-container">
                  
             
                   {relevantPosts.map(post => (
-                        <div className="posts-card">
+                        <div className="posts-card" key={post.id}>
                             <Card className={classes.root} id={"post" + post.id}>
                                 <CardHeader
                                     avatar={
                                     <IconButton style={{padding :'0'}}>   
-                                        <img src={this.state.profile_picture} 
+                                        <img src={this.state.profile_picture} alt="profile-pic"
                                         style={{width: 40, height: 40, borderRadius: 40, borderWidth: 'thick' ,borderColor:'black'} } />
                                     </IconButton>
                                     }
@@ -167,25 +170,26 @@ class Home extends Component{
                                 </div>
                                 <hr/>
                                 <CardContent>
-                                    <Typography variant="body2" color="textSecondary" component="p">
-                                     {post.caption.text}
+                                    <Typography variant="body2" color="textPrimary" component="p">
+                                       {post.caption.text}
                                     </Typography>
-                                    { }
-                             
-                                    <IconButton aria-label="add to favorites">
-                                        <FavoriteBorderIcon onClick={this.increaseLikesHandler} 
-                                        className={this.state.favoritesIcon} />
-                                        <span style={{fontSize :20}}> {post.likes.count} likes </span> 
-                                    </IconButton>
+                                   <br/>
+                                  <div className="like-section" >
+                                      <span onClick={this.increaseLikesHandler}>
+                                    {!this.state.isLiked ?<FavoriteBorderIcon />:
+                                    <FavoriteIcon className="fav"/>}
+                                      </span>       
+                                            <span style={{fontSize :20}}> {post.likes.count} likes </span> 
+                                            </div> 
                                     <br/><br/>
                                   
                                     <div className="comment-container">
                                     
                                     {
                                         this.state.comments.map(comment =>(
-                                            <div>
+                                            <div id={"newcomment"+post.id}>
                                              <span style={{fontWeight:'bolder'}}>{post.user.username} </span>: <span>{comment}</span>
-                                            
+                                              
                                             </div>
                                             
                                            
@@ -195,8 +199,8 @@ class Home extends Component{
                                     <br/><br/>
                                     <FormControl >
                                     <div className ="comment-section">
-                                    <InputLabel htmlFor="commentInput">Add a comment</InputLabel>
-                                    <Input id="commentInput"  type="text"   
+                                    <InputLabel htmlFor={"comment" + post.id}>Add a comment</InputLabel>
+                                    <Input id={"comment" + post.id}  type="text"   
                                     comment={this.state.comment} onChange={this.commentHandler} />
                                     <Button variant="contained" color="primary" onClick={this.addCommentHandler}>
                                         ADD

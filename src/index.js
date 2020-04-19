@@ -1,9 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Login from './screens/login/Login'
 import './index.css';
+import Controller from '../src/Controller'
 
 ReactDOM.render(
-   <Login/>, 
+   <Controller/>, 
     document.getElementById('root')
 );

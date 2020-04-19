@@ -1,8 +1,6 @@
  import React, { Component } from 'react';
  import Header from '../../common/header/Header'
 import './Login.css';
-import { makeStyles } from '@material-ui/core/styles';
-import logo from '../../assets/Logo.png';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
@@ -11,8 +9,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import Input from '@material-ui/core/Input';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Button from '@material-ui/core/Button';
-import Home from '../home/Home';
-import ReactDOM from 'react-dom';
+
 
 const useStyles ={
     width: 400,
@@ -53,7 +50,7 @@ class Login extends Component{
            /* if(this.state.username === "Upgrad" && this.state.loginPassword=="password"){*/
                 this.setState({loggedIn : "true"}) ;
                 sessionStorage.setItem("access-token","8661035776.d0fcd39.39f63ab2f88d4f9c92b0862729ee2784");
-                ReactDOM.render(<Home showSearchTab="true" loggedIn="true" />, document.getElementById('root'));
+                this.props.history.push({pathname : '/home', loggedIn : "true",showSearchTab :"true" ,baseUrl : this.props.baseUrl})
                 
             /*    } else {
                     this.setState({ incorrectUserNamePassword: "dispBlock" });
@@ -65,7 +62,7 @@ class Login extends Component{
 
     render(){
         return(
-            <div><Header/>
+            <div><Header  baseUrl={this.props.baseUrl}  />
             <Card  style={useStyles}>
             <CardContent className="card-content">
                 <Typography variant="h5" component="h2">

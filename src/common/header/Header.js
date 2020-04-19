@@ -1,17 +1,13 @@
 import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
 import './Header.css';
-import Home from '../../screens/home/Home';
-import Login from '../../screens/login/Login';
-import Profile from '../../screens/profile/Profile';
 import InputBase from '@material-ui/core/InputBase';
 import SearchIcon from '@material-ui/icons/Search';
-import { fade, makeStyles } from '@material-ui/core/styles';
+import { fade } from '@material-ui/core/styles';
 import { withStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
-import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
+import { Link } from 'react-router-dom';
 
 
 const styles = (theme) => ({
@@ -46,7 +42,6 @@ const styles = (theme) => ({
     },
     inputInput: {
       padding: theme.spacing(1, 1, 1, 0),
-      // vertical padding + font size from searchIcon
       paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
       transition: theme.transitions.create('width'),
       width: '100%',
@@ -66,10 +61,12 @@ const styles = (theme) => ({
 
   });
 
-  
+
   
 class Header extends Component{
   
+
+
     constructor(){
         super();
         this.state={
@@ -84,7 +81,7 @@ class Header extends Component{
         }
     }
 
-    componentWillMount() {
+    componentDidMount() {
       // Get profile picture
       let data = null;
       let xhr = new XMLHttpRequest();
@@ -98,16 +95,13 @@ class Header extends Component{
               });
           }
       });
-      xhr.open("GET", "v1/users/self/?access_token="+sessionStorage.getItem("access-token"));
+      xhr.open("GET", this.props.baseUrl+"?access_token="+sessionStorage.getItem("access-token"));
       xhr.setRequestHeader("Cache-Control", "no-cache");
       xhr.send(data);
 
       // Get posts 
       let postData = null;
       let xhrPosts = new XMLHttpRequest();
-      
-      
-      
       xhrPosts.addEventListener("readystatechange", function () {
           if (this.readyState === 4) {
               that.setState({
@@ -116,10 +110,12 @@ class Header extends Component{
               });
           }
       });
-      console.log(sessionStorage.getItem("access-token"));
-      xhrPosts.open("GET", "v1/users/self/media/recent?access_token="+sessionStorage.getItem("access-token"));
+     
+      xhrPosts.open("GET", this.props.baseUrl+"/media/recent?access_token="+sessionStorage.getItem("access-token"));
       xhrPosts.setRequestHeader("Cache-Control", "no-cache");
       xhrPosts.send(postData);
+
+      
     }
   }
     
@@ -137,25 +133,19 @@ class Header extends Component{
         this.setState({anchorEl : null });
       };
     
-      searchInputChangeHandler = (e) => {
-        this.setState({searchInput : e.target.value})
-        ReactDOM.render(<Home search={this.state.searchInput}/>, document.getElementById('root'));
-      }
+     /*
    
       profilePageHandler =(e) => {
-        ReactDOM.render(<Profile loggedIn="true"/>,document.getElementById('root') );
       }
 
       LogoutHandler =()=>{
         sessionStorage.removeItem("access-token");
-        ReactDOM.render(<Login />,document.getElementById('root') );
 
-      }
+      } */
 
 
     render(){
     const { classes } = this.props;
-     const { search } = this.state;
      
      
         return(
@@ -168,8 +158,9 @@ class Header extends Component{
                    
                     {this.props.loggedIn ==="true"?
                        <div className="after-login">
-                         <IconButton style={{padding :'0'}} onClick={this.handleClick}>   
-                            <img src={this.state.photo} 
+                         <IconButton style={{padding :'0'}} onClick={this.handleClick}>  
+                          
+                            <img src={this.state.photo} alt=""
                             style={{width: 40, height: 40, borderRadius: 40/2}} />
                           </IconButton>
                          
@@ -192,10 +183,18 @@ class Header extends Component{
                                 onClose={this.handleClose}>
                               <div className={classes.bg}>
                               {this.props.showSearchTab === "true" ?
-                                 <div> <MenuItem onClose={this.handleClose} onClick={this.profilePageHandler}>My Account</MenuItem><hr/> </div>
+                                 <div> <MenuItem onClose={this.handleClose} onClick={this.profilePageHandler}>
+                                   <Link to={"/profile" } loggedIn = "true">
+                                      My Account
+                                      </Link>
+                                   </MenuItem><hr/> </div>
                                 :""}
                               
-                              <MenuItem onClose={this.handleClose}  onClick={this.LogoutHandler}>Logout</MenuItem>
+                              <MenuItem onClose={this.handleClose}  onClick={this.LogoutHandler}>
+                               <Link to={"/" } loggedIn = "false">
+                                Logout
+                                </Link>
+                                </MenuItem>
                               </div> 
                             </Menu>
                            
@@ -212,12 +211,16 @@ class Header extends Component{
 
                    
                     {this.props.loggedIn === "true" && this.props.showSearchTab === "true"
-                        ? <div className={classes.search}>
+                        ?
+                       
+                  
+                        <div className={classes.search}>
                         <div className={classes.searchIcon}>
                           <SearchIcon/>
                           
                     
                         </div>
+                      
                         <InputBase
                           placeholder="Search…"
                           classes={{
@@ -225,9 +228,10 @@ class Header extends Component{
                             input: classes.inputInput,
                           }}
                           inputProps={{ 'aria-label': 'search' }}
-                          onChange={this.searchInputChangeHandler}
-                        />
+                          onChange={this.props.searchHandler}
+                          />
                       </div>
+                     
                     
                         
                         : ""

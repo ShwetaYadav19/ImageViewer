@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Header from '../../common/header/Header'
 import './Profile.css';
 import IconButton from '@material-ui/core/IconButton';
-import { Icon, InlineIcon } from '@iconify/react';
+import { Icon } from '@iconify/react';
 import mdCreate from '@iconify/icons-ion/md-create';
 import Modal from 'react-modal';
 import InputLabel from '@material-ui/core/InputLabel';
@@ -10,8 +10,6 @@ import Input from '@material-ui/core/Input';
 import FormControl from '@material-ui/core/FormControl';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
-import Paper from '@material-ui/core/Paper';
-import Grid from '@material-ui/core/Grid';
 import { withStyles } from '@material-ui/core/styles';
 import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
@@ -91,7 +89,7 @@ class Profile extends Component{
         }
     }
     
-    componentWillMount() {
+    componentDidMount() {
         
     
         // Get profile 
@@ -115,8 +113,8 @@ class Profile extends Component{
                 });
             }
         });
-        console.log(sessionStorage.getItem("access-token"));
-        xhr.open("GET", "v1/users/self/?access_token="+sessionStorage.getItem("access-token"));
+       
+        xhr.open("GET", "v1/users/self?access_token="+sessionStorage.getItem("access-token"));
         xhr.setRequestHeader("Cache-Control", "no-cache");
         xhr.send(data);
 
@@ -135,7 +133,7 @@ class Profile extends Component{
                 });
             }
         });
-        console.log(sessionStorage.getItem("access-token"));
+  
         xhrPosts.open("GET", "v1/users/self/media/recent?access_token="+sessionStorage.getItem("access-token"));
         xhrPosts.setRequestHeader("Cache-Control", "no-cache");
         xhrPosts.send(postData);
@@ -145,7 +143,7 @@ class Profile extends Component{
         
 
     editUsernameHandler = ()=>{
-        console.log("set state open");
+        
         this.setState({ editModalIsOpen: true });
     }
     handleClose = ()=> {
@@ -156,6 +154,7 @@ class Profile extends Component{
         
     }
     updateUsernameHandler = () =>{
+        this.setState({full_name : this.state.updatedUsername});
         this.setState({editModalIsOpen : false});
      
     }
@@ -187,12 +186,12 @@ class Profile extends Component{
         const { classes } = this.props;
         return(
        <div>
-           <Header loggedIn="true" />
+           <Header loggedIn="true" baseUrl={this.props.baseUrl} />
            <div className="profile-box">
                <div className="profile-header">
                    <div className="profile-photo">  
                        <IconButton style={{padding :'0'}} >   
-                            <img src={this.state.profile_picture} 
+                            <img src={this.state.profile_picture} alt="profile-pic"
                             style={{width: 150, height: 150, borderRadius: 140/2}} />
                         </IconButton>
                    </div>
@@ -245,12 +244,12 @@ class Profile extends Component{
                         <div className="post-details"> 
                             <div className="left-modal">
                                 <img  src={this.state.post.images.standard_resolution.url} 
-                                alt={this.state.post.user.id} />
+                                alt="" />
                             </div>
                             <div className="right-modal">
                                 <div className="right-modal-header">
                                     <IconButton style={{padding :0}} >   
-                                        <img src={this.state.profile_picture} 
+                                        <img src={this.state.profile_picture} alt=""
                                         style={{width: 80, height: 80, borderRadius: 80/2}} />
                                 </IconButton>
                                 <span style={{paddingLeft : '10px',fontWeight : 'bold',fontSize:'18px'}}> 
@@ -277,8 +276,8 @@ class Profile extends Component{
                                         ))
                                     }
                                     <br/><br/>
-                                    <IconButton aria-label="add to favorites">
-                                        <FavoriteBorderIcon onClick={this.increaseLikesHandler} 
+                                    <IconButton aria-label="add to favorites" onClick={this.increaseLikesHandler} >
+                                        <FavoriteBorderIcon 
                                         className={this.state.favoritesIcon} />
                                         <span style={{fontSize :20}}> {this.state.post.likes.count} likes </span> 
                                     </IconButton>

@@ -21,13 +21,9 @@
   .image-container{
    padding: 10px;
   }
-  .noLike{
-    background-color: white;
-  }
-
-  .liked{
-    background-color: red;
-  }
+.fav{
+ color: red;
+}
 
   #commentInput{
     width: 300px;
