@@ -48,7 +48,7 @@ class Home extends Component{
             posts : [],
             profile_picture : null,
             comments:[],
-            comment:"",
+            comment:null,
             search:"",
             isLiked:false,
             likedByUser:[],
@@ -200,9 +200,9 @@ class Home extends Component{
                                        
                                     
                                     </Typography>
-                                    <Typography className="tags" variant="body2" color="blue" component="p">
-                                        {post.tags.map(tag=>(
-                                          <span> #{tag}</span>
+                                    <Typography className="tags" variant="body2" component="p">
+                                        {post.tags.map((tag,index)=>(
+                                          <span key={"tag"+post.id+index}> #{tag}</span>
                                         ))
 
                                         }
@@ -222,7 +222,7 @@ class Home extends Component{
                                     <div className="comment-container">
                                     {this.state.comments[index] !== undefined && this.state.comments[index] !== null ?
                                      this.state.comments[index].split(':').map(
-                                        comment=>( <div>
+                                        comment=>( <div key={post.id}> 
                                             <span style={{fontWeight:"bold"}}>{post.user.username} : </span>
                                         <span>{comment}</span><br/>
                                         </div>)
@@ -233,7 +233,7 @@ class Home extends Component{
                                     <FormControl >
                                     <div className ="comment-section">
                                     <InputLabel htmlFor={"comment" + post.id}>Add a comment</InputLabel>
-                                    <Input id={"comment" + post.id}  type="text"  value={this.state.commentForPost[index]}
+                                    <Input key={"comment" + post.id}  type="text"  value={this.state.commentForPost[index]}
                                      comment={this.state.comment} onChange={(e)=>{this.commentHandler(e,index)}}  />
                                     <Button variant="contained" color="primary" onClick={() => this.addCommentHandler(index)}>
                                         ADD

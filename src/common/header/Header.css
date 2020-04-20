@@ -8,6 +8,7 @@
 .side-logo{
     color: white;
     height:  18px;
+    vertical-align: middle;
 }
 
 .after-login{

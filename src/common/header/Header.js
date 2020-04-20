@@ -184,14 +184,14 @@ class Header extends Component{
                               <div className={classes.bg}>
                               {this.props.showSearchTab === "true" ?
                                  <div> <MenuItem onClose={this.handleClose} onClick={this.profilePageHandler}>
-                                   <Link to={"/profile" } loggedIn = "true">
+                                   <Link to={"/profile" } loggedin = "true">
                                       My Account
                                       </Link>
                                    </MenuItem><hr/> </div>
                                 :""}
                               
                               <MenuItem onClose={this.handleClose}  onClick={this.LogoutHandler}>
-                               <Link to={"/" } loggedIn = "false">
+                               <Link to={"/" } loggedin = "false">
                                 Logout
                                 </Link>
                                 </MenuItem>
