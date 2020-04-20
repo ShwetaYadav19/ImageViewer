@@ -66,7 +66,7 @@ class Home extends Component{
         let xhr = new XMLHttpRequest();
         let that = this;
         
-       
+       if(this.props.loggedIn ===  "true"){
         xhr.addEventListener("readystatechange", function () {
             if (this.readyState === 4) {
                 that.setState({
@@ -98,7 +98,7 @@ class Home extends Component{
          xhrPosts.setRequestHeader("Cache-Control", "no-cache");
          xhrPosts.send(postData);
       
-        
+        }
         }  
 
     loadPost=(index)=>{
