@@ -87,7 +87,9 @@ class Profile extends Component{
            favoritesIcon : "noLike",
            comments:[],
            comment:"",
-           index:null
+           index:null,
+           likedByUser:[],
+           commentForPost:[]
         }
     }
     
@@ -165,8 +167,9 @@ class Profile extends Component{
     postDetailClose = () =>{
         this.setState({postModalIsOpen : false});
     }
-    increaseLikesHandler = (id) => {
-        this.setState({isLiked:true});
+    increaseLikesHandler = (id,index) => {
+        this.state.likedByUser[index]=true;
+        this.forceUpdate();
         this.state.posts.map(post=>{
             if(post.id===id){
                 let n = post.likes.count + 1;
@@ -177,8 +180,10 @@ class Profile extends Component{
      }
 
 
-     commentHandler = (e) =>{
-        this.setState({comment : e.target.value})
+     commentHandler = (event,index) =>{
+        this.setState({comment : event.target.value})
+        this.state.commentForPost[index]=event.target.value;
+        this.forceUpdate();
     }
     addCommentHandler =(index) =>{
       if(this.state.comment!==null && this.state.comment !== "")  {
@@ -187,7 +192,9 @@ class Profile extends Component{
               else   this.state.comments[index] = this.state.comments[index]+":"+ this.state.comment; 
               this.forceUpdate();
               
-              this.setState({comment:null});
+              this.setState({comment:''});
+                this.state.commentForPost[index]="";
+                this.forceUpdate();
           }
       }
 
@@ -269,28 +276,37 @@ class Profile extends Component{
                                 </div>
                                 
                                 <div className="right-modal-content">
-                                    <span>{this.state.post.caption.text}</span>
+                                <Typography variant="body2" color="textPrimary" component="p">
+                                     {this.state.post.caption.text.split('\n')[0]}
+                                       
+                                    
+                                    </Typography>
+                                    <Typography className="tags" variant="body2" color="blue" component="p">
+                                        {this.state.post.tags.map(tag=>(
+                                          <span> #{tag}</span>
+                                        ))
+
+                                        }
+                                    </Typography>
                                     <br/><br/>
                               
                                     
                                   
-                                    <div className="comment-container">
-                                    
-                                    {
-                                        this.state.comments.map(comment =>(
-                                            <div>
-                                             <span style={{fontWeight:'bolder'}}>{this.state.username} </span>: <span>{comment}</span>
-                                            
-                                            </div>
-                                            
-                                           
-                                        ))
-                                    }
+                                <div className="comment-container">
+                                   
+                                {this.state.comments[this.state.index] !== undefined && this.state.comments[this.state.index] !== null ?
+                                     this.state.comments[this.state.index].split(':').map(
+                                        comment=>( <div>
+                                            <span style={{fontWeight:"bold"}}>{this.state.post.user.username} : </span>
+                                        <span>{comment}</span><br/>
+                                        </div>)
+                                    ) :""
+                                    } 
                                     <br/><br/>
                                     <div className="like-section" >
-                                      <span onClick={() => this.increaseLikesHandler(this.state.post.id)}>
+                                      <span onClick={() => this.increaseLikesHandler(this.state.post.id,this.state.index)}>
                                      
-                                    {!this.state.post.user_has_liked ?<FavoriteBorderIcon />:
+                                    {!this.state.likedByUser[this.state.index] ?<FavoriteBorderIcon />:
                                     <FavoriteIcon className="fav"/>}
                                       </span>       
                                             <span style={{fontSize :20}}> {this.state.post.likes.count} likes </span> 
@@ -298,20 +314,12 @@ class Profile extends Component{
                                     
                                     <br/>
                                     <FormControl >
-                                      
-                                    {this.state.comments[this.state.index] !== undefined && this.state.comments[this.state.index] !== null ?
-                                     this.state.comments[this.state.index].split(':').map(
-                                        comment=>( <div>
-                                            <span style={{fontWeight:"bold"}}>{this.state.post.user.username} : </span>
-                                        <span>{comment}</span>
-                                        </div>)
-                                    ) :""
-                                    } 
+                                   
                                           <div className ="profile-comment-section">                                    
                                             <InputLabel htmlFor="profilecommentInput">Add a comment</InputLabel>
-                                            <Input id="profilecommentInput"  type="text"   
-                                            comment={this.state.comment} onChange={this.commentHandler} />
-                                            <Button variant="contained" color="primary" onClick={() => this.addCommentHandler(this.state.index)}>
+                                            <Input id="profilecommentInput"  type="text" autoComplete="none" value={this.state.commentForPost[this.state.index]}
+                                     onChange={(e)=> {this.commentHandler(e,this.state.index)}}   />
+                                            <Button variant="contained" color="primary" onClick= {() => {this.addCommentHandler(this.state.index)}}>
                                                 ADD
                                             </Button>
                                         </div>

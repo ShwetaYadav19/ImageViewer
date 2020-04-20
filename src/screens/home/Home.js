@@ -19,6 +19,7 @@ import FavoriteIcon from '@material-ui/icons/Favorite';
 
 
 
+
 const styles = theme => ({
     root: {
         maxWidth: 500,
@@ -43,7 +44,6 @@ class Home extends Component{
   
     constructor(){
         super();
-        
         this.state = {
             posts : [],
             profile_picture : null,
@@ -51,7 +51,9 @@ class Home extends Component{
             comment:"",
             search:"",
             isLiked:false,
-            likedByUser:[]
+            likedByUser:[],
+            commentForPost:[]
+           
             
            
         }
@@ -98,10 +100,17 @@ class Home extends Component{
       
         
         }  
+
+    loadPost=(index)=>{
+        this.state.likedByUser[index]=false;
+        this.forceUpdate();
+      }  
       
-      increaseLikesHandler = (id) => {
-         console.log("Increase likes for : " +id);
-         this.setState({isLiked:true});
+      increaseLikesHandler = (id,index) => {
+        
+         
+         this.state.likedByUser[index]=true;
+         this.forceUpdate();
          this.state.posts.map(post=>{
              if(post.id===id){
                  let n = post.likes.count + 1;
@@ -110,18 +119,11 @@ class Home extends Component{
          })
          
       }
-
-      loadPost = (id) =>{
-        this.state.posts.map(post=>{
-            if(post.id===id){
-               
-            }
-        })
-      }
-
      
-      commentHandler = (e) =>{
-          this.setState({comment : e.target.value})
+      commentHandler = (event,index) =>{
+          this.setState({comment : event.target.value});
+          this.state.commentForPost[index]=event.target.value;
+          this.forceUpdate();
       }
       addCommentHandler =(index) =>{
         if(this.state.comment!==null && this.state.comment !== "")  {
@@ -130,7 +132,10 @@ class Home extends Component{
                 else   this.state.comments[index] = this.state.comments[index]+":"+ this.state.comment; 
                 this.forceUpdate();
                 
-                this.setState({comment:null});
+                this.setState({comment:''});
+                this.state.commentForPost[index]="";
+                this.forceUpdate();
+               
             }
         }
 
@@ -138,12 +143,12 @@ class Home extends Component{
         e.preventDefault();
         this.setState({search :  e.target.value});
         }
-
+    
      
     render(){
         const { classes } = this.props;
         let relevantPosts = this.state.posts;
-        const index=0;
+       
         if(this.state.search !== undefined){
           
             relevantPosts = this.state.posts.filter( post =>{
@@ -162,7 +167,7 @@ class Home extends Component{
                   {relevantPosts.map((post,index) => (
                   
                         
-                        <div className="posts-card" key={post.id} onLoad={this.loadPost}>
+                        <div className="posts-card" key={post.id} onLoad={()=>this.loadPost(index)}>
                             <Card className={classes.root} id={"post" + post.id}>
                                 <CardHeader
                                     avatar={
@@ -204,10 +209,11 @@ class Home extends Component{
                                     </Typography>
                                    <br/>
                                   <div className="like-section" >
-                                      <span onClick={() => this.increaseLikesHandler(post.id)}>
+                                      <span onClick={() => this.increaseLikesHandler(post.id,index)}>
+                                   
                                      
-                                    {!post.user_has_liked ?<FavoriteBorderIcon />:
-                                    <FavoriteIcon className="fav"/>}
+                                    {this.state.likedByUser[index] ?
+                                    <FavoriteIcon className="fav"/>:<FavoriteBorderIcon />}
                                       </span>       
                                             <span style={{fontSize :20}}> {post.likes.count} likes </span> 
                                             </div> 
@@ -218,7 +224,7 @@ class Home extends Component{
                                      this.state.comments[index].split(':').map(
                                         comment=>( <div>
                                             <span style={{fontWeight:"bold"}}>{post.user.username} : </span>
-                                        <span>{comment}</span>
+                                        <span>{comment}</span><br/>
                                         </div>)
                                     ) :""
                                     }
@@ -227,8 +233,8 @@ class Home extends Component{
                                     <FormControl >
                                     <div className ="comment-section">
                                     <InputLabel htmlFor={"comment" + post.id}>Add a comment</InputLabel>
-                                    <Input id={"comment" + post.id}  type="text"   
-                                     comment={this.state.comment} onChange={this.commentHandler} />
+                                    <Input id={"comment" + post.id}  type="text"  value={this.state.commentForPost[index]}
+                                     comment={this.state.comment} onChange={(e)=>{this.commentHandler(e,index)}}  />
                                     <Button variant="contained" color="primary" onClick={() => this.addCommentHandler(index)}>
                                         ADD
                                     </Button>
